@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tính Lương Noel Pro (Đơn vị Tấn) 🎄</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --xmas-red: #D42426;
+            --xmas-green: #165B33;
+            --xmas-gold: #F8B229;
+            --xmas-cream: #FBF5E8;
+            --dark-text: #2C3E50;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 10px;
+            background: #1a3e6e;
+            background-image: radial-gradient(circle at 50% 50%, #2c5a9e 0%, #1a3e6e 100%);
+            color: var(--dark-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Snow Effect */
+        .snowflakes { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .snowflake { position: absolute; color: #fff; font-size: 1em; opacity: 0.8; animation: fall linear infinite; }
+        @keyframes fall { to { transform: translateY(100vh); } }
+        .snowflake:nth-child(1) { left: 10%; animation-duration: 10s; }
+        .snowflake:nth-child(2) { left: 20%; animation-duration: 12s; font-size: 0.8em; }
+        .snowflake:nth-child(3) { left: 70%; animation-duration: 8s; }
+        .snowflake:nth-child(4) { left: 40%; animation-duration: 11s; font-size: 1.2em; }
+
+        .container {
+            position: relative;
+            background: var(--xmas-cream);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 800px;
+            border: 4px solid var(--xmas-red);
+            margin: 20px auto;
+            z-index: 10;
+            box-sizing: border-box;
+        }
+
+        /* Header */
+        h2 {
+            text-align: center;
+            font-family: 'Mountains of Christmas', cursive;
+            color: var(--xmas-red);
+            font-size: 2.2em;
+            margin: 10px 0 20px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .top-decor { text-align: center; font-size: 2em; margin-bottom: -10px; }
+
+        /* Sections */
+        .card-section {
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: var(--xmas-green);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            font-size: 1.1em;
+        }
+        .section-title::before { content: '❄️'; margin-right: 8px; }
+
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 500; color: var(--xmas-green); }
+        
+        .input-wrapper { position: relative; }
+        .input-wrapper input {
+            width: 100%; padding: 12px; padding-right: 60px; /* Space for unit */
+            border: 2px solid #cdd6e0; border-radius: 8px; 
+            box-sizing: border-box; font-size: 16px; 
+        }
+        .input-wrapper .unit {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            color: var(--xmas-red); font-weight: bold; font-size: 0.9em;
+        }
+        .helper-text {
+            font-size: 0.9em; color: #666; font-style: italic; margin-top: 5px; margin-left: 5px;
+        }
+
+        /* Buttons */
+        button {
+            padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;
+        }
+        button:active { transform: translateY(2px); }
+
+        .btn-gen { background: var(--xmas-green); color: white; width: 100%; margin-top: 10px; }
+        .btn-calc {
+            background: linear-gradient(to bottom, var(--xmas-red), #a61b1d); 
+            color: white; width: 100%; font-size: 1.3em; padding: 15px;
+            border: 2px solid var(--xmas-gold); margin-top: 10px;
+        }
+        .btn-remove { 
+            background: #ffecb3; color: #d35400; 
+            padding: 5px 10px; font-size: 0.8em; border-radius: 4px;
+        }
+
+        /* Partial Workers List */
+        .worker-row {
+            display: flex; gap: 8px; margin-bottom: 10px; align-items: center;
+            background: #f4f8f4; padding: 10px; border-radius: 8px; 
+            border-left: 4px solid var(--xmas-green);
+        }
+        .stt-circle {
+            width: 25px; height: 25px; background: var(--xmas-red); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 0.8em; font-weight: bold; flex-shrink: 0;
+        }
+        .worker-row input { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        
+        /* Table */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; border-radius: 8px; overflow: hidden; }
+        th { background: var(--xmas-red); color: white; padding: 12px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #eee; background: white; }
+        .money-col { font-weight: bold; color: #d35400; text-align: right; }
+        .weight-col { color: #555; font-size: 0.9em; }
+
+        .summary-box {
+            margin-top: 20px; padding: 15px; background: #e8f5e9; 
+            border: 2px dashed var(--xmas-green); border-radius: 10px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: var(--dark-text);
+            cursor: pointer;
+        }
+        .checkbox-container input { margin-right: 10px; transform: scale(1.2); }
+    </style>
+</head>
+<body>
+
+<div class="snowflakes">
+    <div class="snowflake">❅</div><div class="snowflake">❆</div><div class="snowflake">❅</div>
+    <div class="snowflake">❆</div>
+</div>
+
+<div class="container">
+    <div class="top-decor">🎄🎁🎅</div>
+    <h2>Tính Lương Noel Pro</h2>
+
+    <!-- INFO SECTION -->
+    <div class="card-section">
+        <div class="section-title">Thông tin chung</div>
+        
+        <div class="input-group">
+            <label>💰 Giá công (1.500.000 đ/Tấn):</label>
+            <input type="number" value="1500000" readonly style="background: #eee; color:#666;">
+        </div>
+
+        <div class="input-group">
+            <label>📦 Tổng khối lượng hàng (Tấn):</label>
+            <div class="input-wrapper">
+                <input type="number" id="totalTons" step="0.001" placeholder="Ví dụ: 33.1" oninput="convertKg('totalTons', 'totalKgDisplay')">
+                <span class="unit">TẤN</span>
+            </div>
+            <div id="totalKgDisplay" class="helper-text">( = 0 KG )</div>
+        </div>
+
+        <div class="input-group">
+            <label>👥 Tổng số người lúc bắt đầu:</label>
+            <input type="number" id="totalWorkers" placeholder="Ví dụ: 38">
+        </div>
+    </div>
+
+    <!-- WORKER LIST SECTION -->
+    <div class="card-section" style="border-color: var(--xmas-green);">
+        <div class="section-title">Danh sách nghỉ sớm / Không làm đủ</div>
+        
+        <div class="input-group">
+            <label>Số người không làm đủ:</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="numPartialWorkers" placeholder="Nhập số lượng (vd: 5)" style="flex:1; padding: 10px; border-radius: 8px; border: 2px solid #ccc;">
+                <button type="button" class="btn-gen" style="width: auto; margin-top:0;" onclick="generateInputs()">Tạo dòng nhập</button>
+            </div>
+        </div>
+
+        <div id="workerListContainer">
+            <!-- Dòng nhập liệu sẽ hiện ở đây -->
+        </div>
+    </div>
+    
+    <label class="checkbox-container">
+        <input type="checkbox" id="expandFullWorkers">
+        Liệt kê chi tiết từng dòng cho "Người làm đủ" (để ký nhận)
+    </label>
+
+    <button type="button" class="btn-calc" onclick="calculate()">🎄 TÍNH TOÁN NGAY 🎁</button>
+
+    <!-- RESULT SECTION -->
+    <div id="results" style="display:none;">
+        <h3 style="text-align: center; color: var(--xmas-red); margin-top:20px; font-family:'Mountains of Christmas'; font-size: 1.8em;">📜 Bảng Lương Chi Tiết</h3>
+        
+        <div style="overflow-x: auto;">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>Tên / Nhóm</th>
+                        <th>KL làm</th>
+                        <th style="text-align: right;">Thực nhận</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="summary-box" id="summaryText"></div>
+    </div>
+</div>
+
+<script>
+    // Hàm hiển thị quy đổi Tấn sang KG
+    function convertKg(inputId, displayId) {
+        let ton = parseFloat(document.getElementById(inputId).value);
+        let display = document.getElementById(displayId);
+        if (!isNaN(ton)) {
+            let kg = ton * 1000;
+            display.innerText = `( = ${kg.toLocaleString()} KG )`;
+        } else {
+            display.innerText = "( = 0 KG )";
+        }
+    }
+
+    // Hàm hiển thị quy đổi cho từng dòng trong danh sách
+    function updateRowKg(input) {
+        let ton = parseFloat(input.value);
+        let span = input.parentElement.parentElement.querySelector('.kg-preview');
+        if (!isNaN(ton)) {
+            span.innerText = `(${ (ton*1000).toLocaleString() } KG)`;
+        } else {
+            span.innerText = '';
+        }
+    }
+
+    // Tạo danh sách nhập liệu tự động
+    function generateInputs() {
+        const num = parseInt(document.getElementById('numPartialWorkers').value);
+        const container = document.getElementById('workerListContainer');
+        
+        if (isNaN(num) || num <= 0) {
+            alert("Vui lòng nhập số lượng người (lớn hơn 0)!");
+            return;
+        }
+
+        container.innerHTML = ""; // Xóa cũ
+
+        for(let i = 1; i <= num; i++) {
+            let div = document.createElement('div');
+            div.className = 'worker-row';
+            div.innerHTML = `
+                <div class="stt-circle">${i}</div>
+                <div style="flex:1;">
+                    <input type="text" placeholder="Tên người ${i}..." class="p-name" style="width:100%; margin-bottom: 5px;">
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <input type="number" step="0.001" placeholder="Số Tấn dừng..." class="p-ton" oninput="updateRowKg(this)" style="width: 70%;">
+                        <span class="unit" style="font-size:0.8em; font-weight:bold; color: var(--xmas-red);">TẤN</span>
+                        <button class="btn-remove" onclick="this.closest('.worker-row').remove()">X</button>
+                    </div>
+                    <div class="kg-preview" style="font-size: 0.8em; color: var(--xmas-green); font-style: italic; margin-top:2px;"></div>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+    }
+
+    // Hàm làm tròn tiền
+    function roundMoneySmart(val) {
+        let nghin = Math.floor(val / 1000) * 1000;
+        let le = val % 1000;
+        if (le < 500) return nghin;
+        return nghin + 500;
+    }
+
+    // Logic tính toán chính
+    function calculate() {
+        const unitPriceTon = 1500000; // Giá cố định 1.5tr/tấn
+        const totalTons = parseFloat(document.getElementById('totalTons').value);
+        const totalWorkersCount = parseInt(document.getElementById('totalWorkers').value);
+        const expandFull = document.getElementById('expandFullWorkers').checked;
+
+        if (isNaN(totalTons) || isNaN(totalWorkersCount) || totalTons <= 0 || totalWorkersCount <= 0) {
+            alert("Vui lòng nhập đủ Tổng Tấn và Tổng số người!");
+            return;
+        }
+
+        // Lấy dữ liệu danh sách nghỉ sớm
+        let partials = [];
+        const rows = document.querySelectorAll('.worker-row');
+        
+        for (let row of rows) {
+            let nameInput = row.querySelector('.p-name').value;
+            let tonInput = parseFloat(row.querySelector('.p-ton').value);
+            
+            if (nameInput && !isNaN(tonInput) && tonInput > 0) {
+                if (tonInput >= totalTons) {
+                    alert(`Lỗi: Người tên "${nameInput}" có số Tấn (${tonInput}) lớn hơn hoặc bằng Tổng Tấn!`);
+                    return;
+                }
+                partials.push({ name: nameInput, stopTon: tonInput });
+            }
+        }
+
+        // Sắp xếp người nghỉ sớm theo số tấn tăng dần
+        partials.sort((a, b) => a.stopTon - b.stopTon);
+
+        // Tạo mốc tấn (milestones)
+        let milestones = [0, ...new Set(partials.map(p => p.stopTon)), totalTons].sort((a, b) => a - b);
+        
+        let workerWages = {}; 
+
+        // Vòng lặp tính toán từng chặng
+        for (let i = 0; i < milestones.length - 1; i++) {
+            let start = milestones[i];
+            let end = milestones[i+1];
+            let weight = end - start;
+            
+            // Tìm số người ĐÃ nghỉ trước hoặc tại mốc start
+            let workersStoppedBefore = partials.filter(p => p.stopTon <= start + 0.00001).length;
+            let activeWorkersCount = totalWorkersCount - workersStoppedBefore;
+            
+            if (activeWorkersCount <= 0) {
+                 alert("Lỗi: Số người làm bằng 0 tại mốc " + start + " Tấn.");
+                 return;
+            }
+
+            let moneyPerPerson = (weight * unitPriceTon) / activeWorkersCount;
+
+            // Cộng tiền cho người chưa nghỉ (bao gồm partial nghỉ sau mốc này, và loyal)
+            partials.forEach(p => {
+                if (p.stopTon >= end - 0.00001) { 
+                    workerWages[p.name] = (workerWages[p.name] || 0) + moneyPerPerson;
+                }
+            });
+
+            // Cộng tiền cho nhóm làm đủ
+            let loyalCount = totalWorkersCount - partials.length;
+            // Dùng một key chung để lưu lương của 1 người làm đủ
+            workerWages['__LOYAL_ONE__'] = (workerWages['__LOYAL_ONE__'] || 0) + moneyPerPerson;
+        }
+
+        // Hiển thị kết quả
+        const tbody = document.querySelector('#resultTable tbody');
+        tbody.innerHTML = '';
+        
+        let grandTotalPaid = 0;
+        let loyalCount = totalWorkersCount - partials.length;
+
+        // 1. In danh sách nghỉ sớm trước
+        partials.forEach(p => {
+            let raw = workerWages[p.name] || 0;
+            let rounded = roundMoneySmart(raw);
+            grandTotalPaid += rounded;
+            
+            let row = `<tr>
+                <td>${p.name}</td>
+                <td class="weight-col">${p.stopTon.toLocaleString()} Tấn</td>
+                <td class="money-col">${rounded.toLocaleString('vi-VN')} đ</td>
+            </tr>`;
+            tbody.insertAdjacentHTML('beforeend', row);
+        });
+
+        // 2. In danh sách người làm đủ
+        if (loyalCount > 0) {
+            let loyalWageRaw = workerWages['__LOYAL_ONE__'] || 0;
+            let loyalWageRounded = roundMoneySmart(loyalWageRaw);
+            grandTotalPaid += (loyalWageRounded * loyalCount);
+
+            if (expandFull) {
+                // Nếu chọn in chi tiết từng dòng
+                for (let k = 1; k <= loyalCount; k++) {
+                     let row = `<tr style="background-color: #fff8e1;">
+                        <td>⭐ Người làm đủ ${k}</td>
+                        <td class="weight-col">Hết (${totalTons.toLocaleString()} Tấn)</td>
+                        <td class="money-col" style="color: var(--xmas-green);">${loyalWageRounded.toLocaleString('vi-VN')} đ</td>
+                    </tr>`;
+                    tbody.insertAdjacentHTML('beforeend', row);
+                }
+            } else {
+                // Nếu chọn gộp nhóm
+                let row = `<tr style="background-color: #fff8e1; border-top: 2px solid var(--xmas-gold);">
+                    <td style="font-weight:bold; color:var(--xmas-green); font-size: 1.1em;">⭐ ${loyalCount} Người làm đủ</td>
+                    <td class="weight-col">Hết (${totalTons.toLocaleString()} Tấn)</td>
+                    <td class="money-col" style="font-size:1.3em;">${loyalWageRounded.toLocaleString('vi-VN')} đ<br><span style="font-size:0.6em; font-weight:normal; color:#666;">(mỗi người)</span></td>
+                </tr>`;
+                tbody.insertAdjacentHTML('beforeend', row);
+            }
+        }
+
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+
+        let totalRevenue = totalTons * unitPriceTon;
+        let surplus = Math.round(totalRevenue) - grandTotalPaid;
+
+        document.getElementById('summaryText').innerHTML = `
+            <div>💰 Tổng tiền hàng: <strong>${Math.round(totalRevenue).toLocaleString('vi-VN')} đ</strong></div>
+            <div style="margin-top:5px;">🎁 Tổng thực chi: <strong>${grandTotalPaid.toLocaleString('vi-VN')} đ</strong></div>
+            <div style="margin-top:5px; color:${surplus >= 0 ? 'green' : 'red'}">✨ Tiền dư (Quỹ): <strong>${surplus.toLocaleString('vi-VN')} đ</strong></div>
+        `;
+    }
+</script>
+
+</body>
+</html>
